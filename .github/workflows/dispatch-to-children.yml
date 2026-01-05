@@ -1,41 +1,31 @@
 name: Dispatch Version to Child Repos
- 
+
 on:
   release:
     types: [published]
- 
+
 permissions:
   contents: read
- 
+
 jobs:
-  send_version:
+  dispatch:
     runs-on: ubuntu-latest
-    environment: PAT   # <- ensures environment secrets are available
- 
+    environment: PAT
+
     steps:
-      # Step 1: Extract version from release tag
-      - name: Extract version from tag
+      - name: Extract version from release tag
         run: |
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
- 
-      # Step 2: Dispatch to wysiwyg-editor-php-sdk-A
-      - name: Dispatch to wysiwyg-editor-php-sdk-A
+          echo "Dispatching version: $VERSION"
+
+      - name: Dispatch to child-A (Rails)
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.PAT }}           # <- updated token name
-          repository: srkdev404-cyber/wysiwyg-editor-php-sdk-A
-          event-type: sync-version
-          client-payload: |
-            {"version": "${{ env.VERSION }}"}
- 
-      # Step 3: Dispatch to yii2-froala-editor-1
-      - name: Dispatch to yii2-froala-editor-1
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.PAT }}           # <- updated token name
-          repository: srkdev404-cyber/yii2-froala-editor-1
-          event-type: sync-version
-          client-payload: |
-            {"version": "${{ env.VERSION }}"}
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/wysiwyg-rails-child-A
+          event-type: version_update
+          client-payload: '{"version":"${{ env.VERSION }}"}'
+
+     
