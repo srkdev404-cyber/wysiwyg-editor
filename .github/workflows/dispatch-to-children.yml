@@ -1,4 +1,4 @@
-name: Dispatch Version to Child Repos
+name: Release & Dispatch to Child Repos
 
 on:
   release:
@@ -13,19 +13,28 @@ jobs:
     environment: PAT
 
     steps:
-      - name: Extract version from release tag
+      # --------------------------------------------
+      # Extract version & release notes
+      # --------------------------------------------
+      - name: Extract version and release notes
         run: |
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#v}"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Dispatching version: $VERSION"
 
-      - name: Dispatch to child-A (Rails)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "${{ github.event.release.body }}" > release_notes.txt
+
+      # --------------------------------------------
+      # Dispatch to Child Repo (Rails)
+      # --------------------------------------------
+      - name: Dispatch release to Rails child repo
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/wysiwyg-rails-child-A
+          repository: srkdev404-cyber/wysiwyg-rails
           event-type: version_update
-          client-payload: '{"version":"${{ env.VERSION }}"}'
-
-     
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
