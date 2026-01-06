@@ -31,7 +31,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/wysiwyg-rails
+          repository: srkdev404-cyber/wysiwyg-rails-child-A
           event-type: version_update
           client-payload: |
             {
