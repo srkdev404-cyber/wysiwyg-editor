@@ -25,13 +25,28 @@ jobs:
           echo "${{ github.event.release.body }}" > release_notes.txt
 
       # --------------------------------------------
-      # Dispatch to Child Repo (Rails)
+      # Dispatch to Child-A (Rails)
       # --------------------------------------------
       - name: Dispatch release to Rails child repo
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
           repository: srkdev404-cyber/wysiwyg-rails-child-A
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
+      # Dispatch to Child-B (Ruby SDK)
+      # --------------------------------------------
+      - name: Dispatch release to Ruby SDK child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/wysiwyg-editor-ruby-sdk-child-B
           event-type: version_update
           client-payload: |
             {
