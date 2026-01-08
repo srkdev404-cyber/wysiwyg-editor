@@ -54,7 +54,7 @@ jobs:
               "release_notes": ${{ toJson(github.event.release.body) }}
             }
        # --------------------------------------------
-      # Dispatch to Child-B (Ruby SDK)
+      # Dispatch to Child-C (Ruby SDK)
       # --------------------------------------------
       - name: Dispatch release to Wordpress
         uses: peter-evans/repository-dispatch@v3
@@ -68,13 +68,27 @@ jobs:
               "release_notes": ${{ toJson(github.event.release.body) }}
             }
         # --------------------------------------------
-      # Dispatch to Child-B (Ruby SDK)
+      # Dispatch to Child-D (Ruby SDK)
       # --------------------------------------------
       - name: Dispatch release to yii2-froala-editor
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
           repository: srkdev404-cyber/yii2-froala-editor-child-D
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+          # --------------------------------------------
+      # Dispatch to Child-E (Ruby SDK)
+      # --------------------------------------------
+      - name: Dispatch release to vue-froala-wysiwyg
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/vue-froala-wysiwyg-child-E
           event-type: version_update
           client-payload: |
             {
