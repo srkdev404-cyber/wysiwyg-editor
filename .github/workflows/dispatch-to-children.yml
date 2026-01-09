@@ -10,24 +10,31 @@ permissions:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
-    environment: PAT
 
     steps:
       # --------------------------------------------
-      # Extract version & release notes
+      # Extract, normalize & validate version
       # --------------------------------------------
-      - name: Extract version and release notes
+      - name: Extract version & release notes
         run: |
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#v}"
+          VERSION="${VERSION//,/\.}"
+
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
 
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "${{ github.event.release.body }}" > release_notes.txt
+          echo "${{ github.event.release.body || '' }}" > release_notes.txt
+
+          echo "Dispatching version: $VERSION"
 
       # --------------------------------------------
       # Dispatch to Child-A (Rails)
       # --------------------------------------------
-      - name: Dispatch release to Rails child repo
+      - name: Dispatch to wysiwyg-rails-child-A
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
@@ -42,7 +49,7 @@ jobs:
       # --------------------------------------------
       # Dispatch to Child-B (Ruby SDK)
       # --------------------------------------------
-      - name: Dispatch release to Ruby SDK child repo
+      - name: Dispatch to wysiwyg-editor-ruby-sdk-child-B
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
@@ -53,10 +60,11 @@ jobs:
               "version": "${{ env.VERSION }}",
               "release_notes": ${{ toJson(github.event.release.body) }}
             }
-       # --------------------------------------------
-      # Dispatch to Child-C (Ruby SDK)
+
       # --------------------------------------------
-      - name: Dispatch release to Wordpress
+      # Dispatch to Child-C (WordPress)
+      # --------------------------------------------
+      - name: Dispatch to wordpress-froala-wysiwyg-child-C
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
@@ -67,10 +75,11 @@ jobs:
               "version": "${{ env.VERSION }}",
               "release_notes": ${{ toJson(github.event.release.body) }}
             }
-        # --------------------------------------------
-      # Dispatch to Child-D (Ruby SDK)
+
       # --------------------------------------------
-      - name: Dispatch release to yii2-froala-editor
+      # Dispatch to Child-D (Yii2)
+      # --------------------------------------------
+      - name: Dispatch to yii2-froala-editor-child-D
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
@@ -81,10 +90,11 @@ jobs:
               "version": "${{ env.VERSION }}",
               "release_notes": ${{ toJson(github.event.release.body) }}
             }
-          # --------------------------------------------
-      # Dispatch to Child-E (Ruby SDK)
+
       # --------------------------------------------
-      - name: Dispatch release to vue-froala-wysiwyg
+      # Dispatch to Child-E (Vue)
+      # --------------------------------------------
+      - name: Dispatch to vue-froala-wysiwyg-child-E
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
