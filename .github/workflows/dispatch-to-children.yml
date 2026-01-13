@@ -15,90 +15,34 @@ jobs:
       # --------------------------------------------
       # Extract, normalize & validate version
       # --------------------------------------------
-      - name: Extract version & release notes
+      - name: Extract & validate version
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
-          VERSION="${VERSION//,/\.}"
+          RAW_TAG="${{ github.event.release.tag_name }}"
 
-          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid version format: $VERSION"
+          # Remove leading "v"
+          VERSION="${RAW_TAG#v}"
+
+          # Normalize commas to dots (defensive)
+          VERSION="${VERSION//,/\.}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "❌ Invalid version tag: $RAW_TAG"
+            echo "Expected formats:"
+            echo "  vX.Y.Z"
+            echo "  vX.Y.Z-alpha | beta | rc.1"
             exit 1
           fi
 
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "${{ github.event.release.body || '' }}" > release_notes.txt
-
           echo "Dispatching version: $VERSION"
 
       # --------------------------------------------
-      # Dispatch to Child-A (Rails)
+      # Dispatch to Child Repo (example: Rails)
       # --------------------------------------------
-      - name: Dispatch to wysiwyg-rails-child-A
+      - name: Dispatch to wysiwyg-rails
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
           repository: srkdev404-cyber/wysiwyg-rails
-          event-type: version_update
-          client-payload: |
-            {
-              "version": "${{ env.VERSION }}",
-              "release_notes": ${{ toJson(github.event.release.body) }}
-            }
-
-      # --------------------------------------------
-      # Dispatch to Child-B (Ruby SDK)
-      # --------------------------------------------
-      - name: Dispatch to wysiwyg-editor-ruby-sdk-child-B
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/wysiwyg-editor-ruby-sdk-child-B
-          event-type: version_update
-          client-payload: |
-            {
-              "version": "${{ env.VERSION }}",
-              "release_notes": ${{ toJson(github.event.release.body) }}
-            }
-
-      # --------------------------------------------
-      # Dispatch to Child-C (WordPress)
-      # --------------------------------------------
-      - name: Dispatch to wordpress-froala-wysiwyg-child-C
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/wordpress-froala-wysiwyg-child-C
-          event-type: version_update
-          client-payload: |
-            {
-              "version": "${{ env.VERSION }}",
-              "release_notes": ${{ toJson(github.event.release.body) }}
-            }
-
-      # --------------------------------------------
-      # Dispatch to Child-D (Yii2)
-      # --------------------------------------------
-      - name: Dispatch to yii2-froala-editor-child-D
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/yii2-froala-editor-child-D
-          event-type: version_update
-          client-payload: |
-            {
-              "version": "${{ env.VERSION }}",
-              "release_notes": ${{ toJson(github.event.release.body) }}
-            }
-
-      # --------------------------------------------
-      # Dispatch to Child-E (Vue)
-      # --------------------------------------------
-      - name: Dispatch to vue-froala-wysiwyg-child-E
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/vue-froala-wysiwyg-child-E
           event-type: version_update
           client-payload: |
             {
