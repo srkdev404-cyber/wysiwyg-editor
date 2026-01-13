@@ -28,7 +28,7 @@ jobs:
             echo "❌ Invalid version tag: $RAW_TAG"
             echo "Expected formats:"
             echo "  vX.Y.Z"
-            echo "  vX.Y.Z-alpha | beta | rc.1"
+            echo "  vX.Y.Z-alpha | beta "
             exit 1
           fi
 
