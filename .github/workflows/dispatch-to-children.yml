@@ -12,33 +12,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # --------------------------------------------
-      # Extract, normalize & validate version
-      # --------------------------------------------
       - name: Extract & validate version
         run: |
           RAW_TAG="${{ github.event.release.tag_name }}"
-
-          # Remove leading "v"
           VERSION="${RAW_TAG#v}"
-
-          # Normalize commas to dots (defensive)
           VERSION="${VERSION//,/\.}"
+
           if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
-            echo "❌ Invalid version tag: $RAW_TAG"
-            echo "Expected formats:"
-            echo "  vX.Y.Z"
-            echo "  vX.Y.Z-alpha | beta "
+            echo "Invalid version: $RAW_TAG"
             exit 1
           fi
 
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Dispatching version: $VERSION"
+          echo "Dispatching version $VERSION"
 
-      # --------------------------------------------
-      # Dispatch to Child Repo (example: Rails)
-      # --------------------------------------------
-      - name: Dispatch to wysiwyg-rails
+      - name: Dispatch to Rails child repo
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
