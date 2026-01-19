@@ -51,7 +51,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/wysiwyg-wordpress
+          repository: srkdev404-cyber/wysiwyg-froala-wordpress
           event-type: version_update
           client-payload: |
             {
@@ -111,7 +111,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/editor-java
+          repository: srkdev404-cyber/wysiwyg-editor-java-sdk
           event-type: version_update
           client-payload: |
             {
@@ -126,7 +126,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/editor-dotnet
+          repository: srkdev404-cyber/wysiwyg-editor-dotnet-sdk
           event-type: version_update
           client-payload: |
             {
