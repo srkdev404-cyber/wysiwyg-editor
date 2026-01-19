@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------------------------
+      # Extract & validate version
+      # --------------------------------------------
       - name: Extract & validate version
         run: |
           RAW_TAG="${{ github.event.release.tag_name }}"
@@ -26,15 +29,108 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Dispatching version $VERSION"
 
+      # --------------------------------------------
+      # Dispatch to Rails
+      # --------------------------------------------
       - name: Dispatch to Rails child repo
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: froala/wysiwyg-rails
+          repository: srkdev404-cyber/wysiwyg-rails
           event-type: version_update
           client-payload: |
             {
               "version": "${{ env.VERSION }}",
               "release_notes": ${{ toJson(github.event.release.body) }}
             }
-      
+
+      # --------------------------------------------
+      # Dispatch to WordPress
+      # --------------------------------------------
+      - name: Dispatch to WordPress child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/wysiwyg-wordpress
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
+      # Dispatch to Yii2
+      # --------------------------------------------
+      - name: Dispatch to Yii2 child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/yii2-froala-editor
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
+      # Dispatch to Vue
+      # --------------------------------------------
+      - name: Dispatch to Vue child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/vue-froala-wysiwyg
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
+      # Dispatch to React
+      # --------------------------------------------
+      - name: Dispatch to React child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/react-froala-wysiwyg
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
+      # Dispatch to Java
+      # --------------------------------------------
+      - name: Dispatch to Java child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/editor-java
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
+      # Dispatch to DotNet
+      # --------------------------------------------
+      - name: Dispatch to DotNet child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/editor-dotnet
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
