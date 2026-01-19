@@ -51,7 +51,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.PAT }}
-          repository: srkdev404-cyber/wysiwyg-froala-wordpress
+          repository: srkdev404-cyber/wordpress-froala-wysiwyg
           event-type: version_update
           client-payload: |
             {
