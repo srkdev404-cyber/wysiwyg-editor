@@ -1,2 +1,0 @@
-HELLO WORLD!
-  Creating new file in JS
