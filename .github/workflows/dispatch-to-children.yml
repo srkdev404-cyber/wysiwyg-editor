@@ -45,6 +45,21 @@ jobs:
             }
 
       # --------------------------------------------
+      # Dispatch to Rails
+      # --------------------------------------------
+      - name: Dispatch to Ruby child repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: srkdev404-cyber/wysiwyg-editor-ruby-sdk
+          event-type: version_update
+          client-payload: |
+            {
+              "version": "${{ env.VERSION }}",
+              "release_notes": ${{ toJson(github.event.release.body) }}
+            }
+
+      # --------------------------------------------
       # Dispatch to WordPress
       # --------------------------------------------
       - name: Dispatch to WordPress child repo
