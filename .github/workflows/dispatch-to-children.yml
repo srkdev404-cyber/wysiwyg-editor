@@ -45,7 +45,7 @@ jobs:
             }
 
       # --------------------------------------------
-      # Dispatch to Rails
+      # Dispatch to Ruby
       # --------------------------------------------
       - name: Dispatch to Ruby child repo
         uses: peter-evans/repository-dispatch@v3
